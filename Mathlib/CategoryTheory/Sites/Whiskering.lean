@@ -161,6 +161,16 @@ instance hasSheafCompose_of_preservesLimitsOfSize [PreservesLimitsOfSize.{v₁, 
 
 variable {J}
 
+/-- If the forgetful functor of a concrete category `A` is corepresentable, then composing with it
+preserves sheaves for any Grothendieck topology. -/
+instance {FA : A → A → Type*} {CA : A → Type v₂}
+    [∀ X Y, FunLike (FA X Y) (CA X) (CA Y)] [ConcreteCategory A FA]
+    [(forget A).IsCorepresentable] : J.HasSheafCompose (forget A) where
+  isSheaf P hP := by
+    rw [isSheaf_iff_isSheaf_of_type]
+    exact Presieve.isSheaf_iso J (Functor.isoWhiskerLeft P (forget A).coreprW)
+      (hP (forget A).coreprX)
+
 lemma Sheaf.isSeparated {FA : A → A → Type*} {CA : A → Type*}
     [∀ X Y, FunLike (FA X Y) (CA X) (CA Y)] [ConcreteCategory A FA] [J.HasSheafCompose (forget A)]
     (F : Sheaf J A) : Presheaf.IsSeparated J F.obj := by
